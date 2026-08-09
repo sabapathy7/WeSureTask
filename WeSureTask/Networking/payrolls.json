@@ -1,0 +1,26 @@
+[
+  {
+    "id": "3F2504E0-4F89-41D3-9A0C-0305E82C3301",
+    "createdAt": "2026-08-01T09:00:00Z",
+    "employees": [
+      {
+        "id": "D504FAE0-558B-401F-B222-5D91FAEDBBEA",
+        "name": "Sarah Mitchell",
+        "wages": "900",
+        "isExempt": false
+      },
+      {
+        "id": "E35AD0EC-52A3-421E-9C08-14E55163221F",
+        "name": "James Caldwell",
+        "wages": "1900",
+        "isExempt": true
+      },
+      {
+        "id": "4A1347CD-0FAE-4C22-9E61-03F9323A677B",
+        "name": "Laura Nguyen",
+        "wages": "2000",
+        "isExempt": false
+      }
+    ]
+  }
+]
