@@ -8,6 +8,7 @@
 
 import XCTest
 
+@MainActor
 final class WeSureTaskUITests: XCTestCase {
     private var app: XCUIApplication!
 
@@ -27,20 +28,17 @@ final class WeSureTaskUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    @MainActor
     private func launchApp() {
         app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]
         app.launch()
     }
 
-    @MainActor
     private func waitForPayrollsScreen() {
         let title = app.navigationBars["Payrolls"]
         XCTAssertTrue(title.waitForExistence(timeout: 5))
     }
 
-    @MainActor
     private func openNewPayroll() {
         waitForPayrollsScreen()
         // systemImage "plus" often exposes accessibility as "New Payroll"
@@ -50,7 +48,6 @@ final class WeSureTaskUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["New Payroll"].waitForExistence(timeout: 3))
     }
 
-    @MainActor
     private func fillFirstEmployee(name: String, wages: String, exempt: Bool = false) {
         let nameField = app.textFields["Employee Name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 2))
@@ -64,7 +61,6 @@ final class WeSureTaskUITests: XCTestCase {
         }
     }
 
-    @MainActor
     func testEmptyState_onFreshLaunch() {
         waitForPayrollsScreen()
 
@@ -73,7 +69,6 @@ final class WeSureTaskUITests: XCTestCase {
         )
     }
 
-    @MainActor
     func testCancelCreatePayroll_dismissesSheet() {
         openNewPayroll()
         app.buttons["Cancel"].tap()
@@ -81,7 +76,6 @@ final class WeSureTaskUITests: XCTestCase {
         XCTAssertFalse(app.navigationBars["New Payroll"].exists)
     }
 
-    @MainActor
     func testCreatePayroll_appearsInList() {
         openNewPayroll()
         fillFirstEmployee(name: "Ada Lovelace", wages: "2500")
@@ -92,7 +86,6 @@ final class WeSureTaskUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["1 employee"].waitForExistence(timeout: 5))
     }
 
-    @MainActor
     func testSaveDisabled_untilEmployeeIsValid() {
         openNewPayroll()
         let save = app.buttons["Save"]
