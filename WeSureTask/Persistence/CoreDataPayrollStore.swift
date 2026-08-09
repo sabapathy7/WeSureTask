@@ -27,11 +27,11 @@ nonisolated final class CoreDataPayrollStore: PayrollStore, @unchecked Sendable 
         return try await context.perform {
             let request = PayrollEntity.fetchRequest()
             request.sortDescriptors = [NSSortDescriptor(keyPath: \PayrollEntity.createdAt, ascending: false)]
-            return try context.fetch(request).compactMap(self.makePayroll)
+            return try context.fetch(request).compactMap(Self.makePayroll)
         }
     }
 
-    private func makePayroll(_ entity: PayrollEntity) -> Payroll? {
+    private static func makePayroll(_ entity: PayrollEntity) -> Payroll? {
         guard let id = entity.id,
               let createdAt = entity.createdAt else
         {
@@ -45,7 +45,7 @@ nonisolated final class CoreDataPayrollStore: PayrollStore, @unchecked Sendable 
                        syncState: SyncState(storeValue: entity.syncState))
     }
 
-    private func makeEmployee(_ entity: EmployeeEntity) -> Employee? {
+    private static func makeEmployee(_ entity: EmployeeEntity) -> Employee? {
         guard let id = entity.id,
               let name = entity.name,
               let wages = entity.wages else {
@@ -69,7 +69,7 @@ nonisolated final class CoreDataPayrollStore: PayrollStore, @unchecked Sendable 
                 let row = EmployeeEntity(context: context)
                 row.id = employee.id
                 row.name = employee.name
-                row.wages = NSDecimalNumber(value: (employee.wages as NSDecimalNumber).doubleValue)
+                row.wages = NSDecimalNumber(decimal: employee.wages)
                 row.isExempt = employee.isExempt
                 row.payroll = entity
 
@@ -82,7 +82,7 @@ nonisolated final class CoreDataPayrollStore: PayrollStore, @unchecked Sendable 
         let context = stack.newBackgroundContext()
         try await context.perform {
             let request = PayrollEntity.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.predicate = NSPredicate(format: "%K == %@", #keyPath(PayrollEntity.id) ,id as CVarArg)
             request.fetchLimit = 1
             guard let entity = try context.fetch(request).first else {
                 return
@@ -96,7 +96,7 @@ nonisolated final class CoreDataPayrollStore: PayrollStore, @unchecked Sendable 
         let context = stack.newBackgroundContext()
         try await context.perform {
             let request = PayrollEntity.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.predicate = NSPredicate(format: "%K == %@", #keyPath(PayrollEntity.id) ,id as CVarArg)
             request.fetchLimit = 1
             guard let entity = try context.fetch(request).first else {
                 return
