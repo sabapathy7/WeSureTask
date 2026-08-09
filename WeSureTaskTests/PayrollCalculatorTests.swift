@@ -5,13 +5,12 @@
 //  Created by Kanagasabapathy on 09.08.26.
 //
 
-
 import Foundation
 import Testing
 
 @testable import WeSureTask
 
-extension Decimal {
+nonisolated extension Decimal {
     static func exact(_ string: String) -> Decimal {
         guard let value = Decimal(string: string) else {
             preconditionFailure("Not a valid decimal string: \(string)")
