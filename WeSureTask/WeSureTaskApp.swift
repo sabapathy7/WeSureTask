@@ -10,9 +10,24 @@ import SwiftUI
 
 @main
 struct WeSureTaskApp: App {
+    @AppStorage("isDarkMode") private var isDarkMode: Bool = false
+    private let repository: PayrollRepository
+
+    init() {
+        let uiTesting = ProcessInfo.processInfo.arguments.contains("-ui-testing")
+        let stack = CoreDataStack(inMemory: uiTesting)
+        let store = CoreDataPayrollStore(stack: stack)
+        let api = MockPayrollAPI(
+            latency: uiTesting ? .zero : .milliseconds(400),
+            seed: uiTesting ? [] : nil
+        )
+        repository = PayrollRepositoryImpl(store: store, api: api)
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PayrollListView(viewModel: PayrollListViewModel(repository: repository))
+                .preferredColorScheme(isDarkMode ? .dark : .light)
         }
     }
 }
