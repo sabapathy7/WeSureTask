@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest available Xcode
+        run: sudo xcode-select -s /Applications/Xcode_latest-stable.app || sudo xcode-select -p
+
+      - name: Show available simulators
+        run: xcrun simctl list devices available
+
+      - name: Run tests
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project WeSureTask.xcodeproj \
+            -scheme WeSureTask \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            | xcpretty
+        continue-on-error: false

@@ -58,10 +58,13 @@ struct CreatePayrollView: View {
     }
 }
 
+#if DEBUG
 #Preview("Empty form — Save disabled") {
     CreatePayrollView(viewModel: CreatePayrollViewModel(repository: StubPayrollRepository()), onCreated: { _ in })
 }
+#endif
 
+#if DEBUG
 #Preview("Valid Form - Save Enabled") {
     let viewModel = CreatePayrollViewModel(repository: StubPayrollRepository())
     viewModel.drafts = [
@@ -71,3 +74,4 @@ struct CreatePayrollView: View {
     ]
     return CreatePayrollView(viewModel: viewModel, onCreated: { _ in })
 }
+#endif
