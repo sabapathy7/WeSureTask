@@ -8,7 +8,6 @@
 
 import XCTest
 
-@MainActor
 final class WeSureTaskUITests: XCTestCase {
     private var app: XCUIApplication!
 
@@ -17,9 +16,6 @@ final class WeSureTaskUITests: XCTestCase {
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-        app = XCUIApplication()
-        app.launchArguments = ["-ui-testing"]
-        app.launch()
 
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
@@ -28,19 +24,23 @@ final class WeSureTaskUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    private func launchApp() {
+    @MainActor
+    private func launchApp() -> XCUIApplication {
         app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]
         app.launch()
+        return app
     }
 
-    private func waitForPayrollsScreen() {
+    @MainActor
+    private func waitForPayrollsScreen(_ app: XCUIApplication) {
         let title = app.navigationBars["Payrolls"]
         XCTAssertTrue(title.waitForExistence(timeout: 5))
     }
 
-    private func openNewPayroll() {
-        waitForPayrollsScreen()
+    @MainActor
+    private func openNewPayroll(_ app: XCUIApplication) {
+        waitForPayrollsScreen(app)
         // systemImage "plus" often exposes accessibility as "New Payroll"
         let newButton = app.buttons["New Payroll"]
         XCTAssertTrue(newButton.waitForExistence(timeout: 2))
@@ -48,7 +48,8 @@ final class WeSureTaskUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["New Payroll"].waitForExistence(timeout: 3))
     }
 
-    private func fillFirstEmployee(name: String, wages: String, exempt: Bool = false) {
+    @MainActor
+    private func fillFirstEmployee(_ app: XCUIApplication, name: String, wages: String, exempt: Bool = false) {
         let nameField = app.textFields["Employee Name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 2))
         nameField.tap()
@@ -61,24 +62,30 @@ final class WeSureTaskUITests: XCTestCase {
         }
     }
 
+    @MainActor
     func testEmptyState_onFreshLaunch() {
-        waitForPayrollsScreen()
+        let app = launchApp()
+        waitForPayrollsScreen(app)
 
         XCTAssertTrue(
             app.staticTexts["No payrolls yet"].waitForExistence(timeout: 5)
         )
     }
 
+    @MainActor
     func testCancelCreatePayroll_dismissesSheet() {
-        openNewPayroll()
+        let app = launchApp()
+        openNewPayroll(app)
         app.buttons["Cancel"].tap()
         XCTAssertTrue(app.navigationBars["Payrolls"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.navigationBars["New Payroll"].exists)
     }
 
+    @MainActor
     func testCreatePayroll_appearsInList() {
-        openNewPayroll()
-        fillFirstEmployee(name: "Ada Lovelace", wages: "2500")
+        let app = launchApp()
+        openNewPayroll(app)
+        fillFirstEmployee(app, name: "Ada Lovelace", wages: "2500")
         app.buttons["Save"].tap()
         // Back on list
         XCTAssertTrue(app.navigationBars["Payrolls"].waitForExistence(timeout: 5))
@@ -86,12 +93,14 @@ final class WeSureTaskUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["1 employee"].waitForExistence(timeout: 5))
     }
 
+    @MainActor
     func testSaveDisabled_untilEmployeeIsValid() {
-        openNewPayroll()
+        let app = launchApp()
+        openNewPayroll(app)
         let save = app.buttons["Save"]
         XCTAssertTrue(save.waitForExistence(timeout: 2))
         XCTAssertFalse(save.isEnabled)
-        fillFirstEmployee(name: "Ada", wages: "1000")
+        fillFirstEmployee(app, name: "Ada", wages: "1000")
         XCTAssertTrue(save.isEnabled)
     }
 }
