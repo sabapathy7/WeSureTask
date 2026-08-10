@@ -68,8 +68,6 @@ The bundled seed data matches the brief's worked example:
 
 ## Screenshots
 
-## Screenshots
-
 | Payroll List | Create Payroll | Payroll Detail | All-Exempt (no tax row) |
 |---|---|---|---|
 | <img width="200" alt="Payroll List screen showing a seeded payroll" src="https://github.com/user-attachments/assets/845a418f-479a-4a63-bbf1-1203896be163" /> | <img width="200" alt="Create Payroll screen with a filled-in employee row" src="https://github.com/user-attachments/assets/87301576-eded-4262-b346-2119a63a1a5c" /> | <img width="200" alt="Payroll Detail screen matching the brief's worked example" src="https://github.com/user-attachments/assets/89e59685-1694-4e21-a32a-ebe729c63db4" /> | <img width="200" alt="Detail screen for an all-exempt payroll with the Total Taxes row hidden" src="https://github.com/user-attachments/assets/98acf1af-a1c3-4289-8c8e-6714695b287f" /> |
