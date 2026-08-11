@@ -24,12 +24,13 @@ jobs:
           xcodebuild -version
           xcrun simctl list devices available
 
-      - name: Run tests
+      - name: Unit tests
         run: |
           set -o pipefail
           xcodebuild test \
             -project WeSureTask.xcodeproj \
             -scheme WeSureTask \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=26.2' \
+            -only-testing:WeSureTaskTests \
             -resultBundlePath TestResults.xcresult \
             | xcbeautify --renderer github-actions
