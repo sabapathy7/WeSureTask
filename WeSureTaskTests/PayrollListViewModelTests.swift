@@ -47,4 +47,30 @@ struct PayrollListViewModelTests {
         #expect(viewModel.payrolls.first?.id == new.id)
         #expect(viewModel.payrolls.count == 2)
     }
+
+    @Test("Successful sync leaves the banner unset")
+    func observeSuccessLeavesBannerNil() async {
+        let viewModel = PayrollListViewModel(repository:
+                                                StubPayrollRepository(syncState: .synced))
+        let payroll = Payroll(id: UUID(),
+                              employees: [.laura],
+                              createdAt: .now,
+                              syncState: .synced)
+        await viewModel.observeSync(of: payroll)
+
+        #expect(viewModel.banner == nil)
+    }
+
+    @Test("Successful sync leaves the banner unset")
+    func observeSyncFailureSetsBanner() async {
+        let viewModel = PayrollListViewModel(repository:
+                                                StubPayrollRepository(syncState: .failed))
+        let payroll = Payroll(id: UUID(),
+                              employees: [.laura],
+                              createdAt: .now,
+                              syncState: .synced)
+        await viewModel.observeSync(of: payroll)
+
+        #expect(viewModel.banner == "Saved on this device. Couldn't reach the server")
+    }
 }
