@@ -2,12 +2,9 @@
 
 Payroll Management take-home for WeSure — create payrolls, associate employees, and review a summary of wages and taxes.
 
-<!-- Add screenshots here, e.g.: -->
-<!-- ![Payroll List](docs/screenshots/list.png) ![Create Payroll](docs/screenshots/create.png) ![Payroll Detail](docs/screenshots/detail.png) -->
-
 ## How to Run
 
-- Requirements: Xcode 16+, iOS 17.6+ simulator or device.
+- Requirements: Xcode 26+ (Swift 6.2, Approachable Concurrency), iOS 17.6+ simulator or device.
 - Open `WeSureTask.xcodeproj`, select the `WeSureTask` scheme, and run (⌘R).
 - Run tests with ⌘U, or from the command line:
   ```
@@ -25,7 +22,7 @@ MVVM + Repository — deliberately not Clean Architecture. Three screens don't j
 ```
 View (SwiftUI)
   ↓ observes
-ViewModel (@Observable, @MainActor)
+ViewModel (@Observable; main-actor isolated via Default Actor Isolation)
   ↓ depends on protocol
 PayrollRepository (protocol)
   ↓
@@ -38,7 +35,9 @@ Two rules carry most of the design:
 1. `NSManagedObject` never leaves the store layer — `CoreDataPayrollStore` maps to/from plain `Payroll`/`Employee` structs; views and view models never import CoreData.
 2. Tax math lives in a pure, dependency-free `PayrollCalculator`, not in a view model: wages strictly greater than $1,000 and not exempt → 5% tax, rounded per employee.
 
-Built with Swift 6 language mode and complete concurrency checking on — view models are `@MainActor`, domain/DTO types are `Sendable`, and persistence/network writes run off the main actor.
+Built with Swift 6, complete concurrency checking, and Approachable Concurrency
+(Default Actor Isolation = MainActor). UI state lives on the main actor; domain/DTO
+types are Sendable; persistence/network work runs off the main actor (actors / async APIs).
 
 ## Offline Strategy
 
