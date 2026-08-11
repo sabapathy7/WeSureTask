@@ -36,12 +36,10 @@ final class PayrollListViewModel {
     }
 
     func observeSync(of payroll: Payroll) async {
-        Task {
-            if await repository.syncResult(for: payroll.id) == .failed {
-                banner = "Saved on this device. Couldn't reach the server"
-            }
-            await load()
+        if await repository.syncResult(for: payroll.id) == .failed {
+            banner = "Saved on this device. Couldn't reach the server"
         }
+        await load()
     }
 
     func load() async {

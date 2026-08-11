@@ -12,6 +12,7 @@ struct PayrollListView: View {
 
     @State var viewModel: PayrollListViewModel
     @State private var isCreating: Bool = false
+    @State private var payrollAwaitingSync: Payroll?
     init(viewModel: PayrollListViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
@@ -35,13 +36,16 @@ struct PayrollListView: View {
                     CreatePayrollView(viewModel: viewModel.makeCreateViewModel(),
                                       onCreated: {payroll in
                         viewModel.didCreate(payroll)
-                        Task {
-                            await viewModel.observeSync(of: payroll)
-                        }
+                        payrollAwaitingSync = payroll
                     })
                 }
                 .task {
                     await viewModel.load()
+                }
+                .task(id: payrollAwaitingSync?.id) {
+                    guard let payroll = payrollAwaitingSync else { return }
+                    await viewModel.observeSync(of: payroll)
+                    payrollAwaitingSync = nil
                 }
                 .safeAreaInset(edge: .bottom) {
                     if let banner = viewModel.banner {
