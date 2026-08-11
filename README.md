@@ -1,5 +1,7 @@
 # WeSureTask
 
+![CI](https://github.com/sabapathy7/WeSureTask/actions/workflows/ci.yml/badge.svg)
+
 Payroll Management take-home for WeSure — create payrolls, associate employees, and review a summary of wages and taxes.
 
 ## How to Run
@@ -50,8 +52,8 @@ Creating a payroll is an **optimistic local write**: insert into Core Data as `.
 ## Testing
 
 - **Unit tests** (Swift Testing, `WeSureTaskTests`): `PayrollCalculatorTests`/`PayrollSummaryTests` cover the tax rule's edge cases against the brief's own worked example (exactly $1,000 → untaxed, exemption overrides amount, per-employee rounding); `CoreDataPayrollStoreTests` round-trips persistence against an in-memory store; `MockPayrollAPITests` covers latency/failure injection; `PayrollRepositoryTests` covers the optimistic-write path; `PayrollListViewModelTests`/`CreatePayrollViewModelTests` cover state and validation.
-- **UI tests** (XCTest/XCUITest, `WeSureTaskUITests`): launched with `-ui-testing` for a deterministic empty-state seed. Covers empty-state rendering, cancel-dismisses-sheet, create-appears-in-list, and Save-disabled-until-valid.
-- **CI**: GitHub Actions runs both test targets on every push/PR to `main`.
+- **UI tests** (`WeSureTaskUITests`): available locally via ⌘U / `-ui-testing` seed; not run in CI (simulator UI flakes on GitHub runners).
+- **CI**: GitHub Actions runs `WeSureTaskTests` on every push/PR to `main`.
 
 ## Example
 
